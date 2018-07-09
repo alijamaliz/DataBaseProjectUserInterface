@@ -38,8 +38,8 @@ $participants = $connection->query(get_event_participants_by_id($id));
         if ($event->num_rows == 1) {
             // output data of each row
             while ($row = $event->fetch_assoc()) {
-                echo sprintf('<tr><th scope="row">%d</th><td>%d</td><td><a href="single-holder.php?username=%s">%s</a></td><td>%s</td><td>%s</td><td><a href="single-event.php?id=%d">%s</a></td><td>%d</td></tr>',
-                    $row["date_to"], $row["date_from"], $row["holder_username"], $row["holder_name"], $row["location_title"], $row["subject_title"], $row["event_id"], $row["event_title"], $row["event_id"]);
+                echo sprintf('<tr><th scope="row">%d</th><td>%d</td><td><a href="single-holder.php?username=%s">%s</a></td><td>%s</td><td><a href="single-subject.php?id=%d">%s</a></td><td><a href="single-event.php?id=%d">%s</a></td><td>%d</td></tr>',
+                    $row["date_to"], $row["date_from"], $row["holder_username"], $row["holder_name"], $row["location_title"], $row["subject_id"], $row["subject_title"], $row["event_id"], $row["event_title"], $row["event_id"]);
             }
         } else {
             echo "Not found";
