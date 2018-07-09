@@ -75,7 +75,7 @@ function get_event_participants_by_id($id)
 function get_event_holder_by_username($username)
 {
     return "SELECT `user`.mobile_number as holder_number, concat(`user`.first_name, ' ', `user`.last_name) as holder_name, 
-                  `user`.email as holder_email, event_holder.title as holder_title 
+                  `user`.email as holder_email, `user`.national_code as holder_national_code, event_holder.title as holder_title
             FROM event_holder JOIN `user` WHERE event_holder.username = '$username' AND event_holder.user_national_code = `user`.national_code";
 }
 
@@ -114,4 +114,43 @@ function get_holder_comments_by_username($username)
             FROM `user` JOIN holder_comment JOIN event_holder JOIN comment WHERE event_holder.username = '$username' AND 
             holder_comment.comment_id = comment.id AND holder_comment.participant_national_code = user.national_code
             AND holder_comment.holder_national_code = event_holder.user_national_code";
+}
+
+function get_participant_by_national_code($national_code)
+{
+    return "SELECT `user`.mobile_number as participant_number, concat(`user`.first_name, ' ', `user`.last_name) as participant_name, 
+                  `user`.email as participant_email, `user`.national_code as participant_national_code, participant.gender as participant_gender 
+            FROM participant JOIN `user` WHERE participant.user_national_code = '$national_code' AND participant.user_national_code = `user`.national_code";
+}
+
+
+function get_participant_events_by_national_code($national_code)
+{
+    return "
+SELECT event.id as event_id,
+    event.title as event_title,
+    subject.text as subject_title,
+    location.title as location_title,
+    event_holder.title as holder_name,
+    event_holder.username as holder_username,
+    event.date_from as date_from,
+    event.date_to as date_to
+FROM participate JOIN `event` JOIN `subject` JOIN `location` JOIN `event_holder` JOIN `user`
+WHERE participate.participant_national_code = '$national_code' AND event.id = participate.event_id AND 
+  `location`.`id` = `event`.`location_id` AND `subject`.`id` = `event`.`subject_id` AND 
+  `event`.`holder_national_code` = `event_holder`.`user_national_code` AND 
+  `event_holder`.`user_national_code` = `user`.`national_code`";
+}
+
+function get_participant_comments_by_national_code($national_code)
+{
+    return "SELECT comment.id as comment_id, comment.text as comment_text, concat(user.first_name, ' ', user.last_name) as participant_name,
+            `user`.national_code as participant_national_code
+            FROM `user` JOIN holder_comment JOIN comment WHERE holder_comment.participant_national_code = '$national_code' AND 
+            holder_comment.comment_id = comment.id AND holder_comment.participant_national_code = user.national_code
+            UNION 
+            SELECT comment.id as comment_id, comment.text as comment_text, concat(user.first_name, ' ', user.last_name) as participant_name,
+            `user`.national_code as participant_national_code
+            FROM `user` JOIN event_comment JOIN comment WHERE event_comment.participant_national_code = '$national_code' AND 
+            event_comment.comment_id = comment.id AND event_comment.participant_national_code = user.national_code";
 }
