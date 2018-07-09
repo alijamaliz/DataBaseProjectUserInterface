@@ -35,8 +35,8 @@ $comments = $connection->query(get_holder_comments_by_username($username));
         if ($holder->num_rows == 1) {
             // output data of each row
             while ($row = $holder->fetch_assoc()) {
-                echo sprintf('<tr><th scope="row">%s</th><td>%s</td><td>%s</td><td>%s</td></tr>',
-                    $row["holder_number"], $row["holder_email"], $row["holder_name"], $row["holder_title"]);
+                echo sprintf('<tr><th scope="row">%s</th><td>%s</td><td><a href="single-participant.php?national_code=%s">%s</a></td><td>%s</td></tr>',
+                    $row["holder_number"], $row["holder_email"], $row["holder_national_code"], $row["holder_name"], $row["holder_title"]);
             }
         } else {
             echo "یافت نشد";
@@ -93,8 +93,8 @@ $comments = $connection->query(get_holder_comments_by_username($username));
                 $gender = "مرد";
                 if ($row["follower_gender"] == 0)
                     $gender = "زن";
-                echo sprintf('<tr><th scope="row">%s</th><td>%s</td></tr>',
-                    $gender, $row["follower_name"]);
+                echo sprintf('<tr><th scope="row">%s</th><td><a href="single-participant.php?national_code=%s">%s</a></td></tr>',
+                    $gender, $row["follower_national_code"], $row["follower_name"]);
             }
         } else {
             echo "موردی یافت نشد.";
