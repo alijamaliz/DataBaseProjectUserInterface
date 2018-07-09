@@ -21,6 +21,7 @@ $get_all_event = "
 SELECT event.id as event_id,
     event.title as event_title,
     subject.text as subject_title,
+    subject.id as subject_id,
     location.title as location_title,
     event_holder.title as holder_name,
     event_holder.username as holder_username,
@@ -38,6 +39,7 @@ function get_event_by_id($id)
 SELECT event.id as event_id,
     event.title as event_title,
     subject.text as subject_title,
+    subject.id as subject_id,
     location.title as location_title,
     event_holder.title as holder_name,
     event_holder.username as holder_username,
@@ -85,6 +87,7 @@ function get_holder_events_by_username($username)
 SELECT event.id as event_id,
     event.title as event_title,
     subject.text as subject_title,
+    subject.id as subject_id,
     location.title as location_title,
     event_holder.title as holder_name,
     event_holder.username as holder_username,
@@ -130,6 +133,7 @@ function get_participant_events_by_national_code($national_code)
 SELECT event.id as event_id,
     event.title as event_title,
     subject.text as subject_title,
+    subject.id as subject_id,
     location.title as location_title,
     event_holder.title as holder_name,
     event_holder.username as holder_username,
@@ -153,4 +157,23 @@ function get_participant_comments_by_national_code($national_code)
             `user`.national_code as participant_national_code
             FROM `user` JOIN event_comment JOIN comment WHERE event_comment.participant_national_code = '$national_code' AND 
             event_comment.comment_id = comment.id AND event_comment.participant_national_code = user.national_code";
+}
+
+function get_events_by_subject_id($subject_id)
+{
+    return "
+SELECT event.id as event_id,
+    event.title as event_title,
+    subject.text as subject_title,
+    subject.id as subject_id,
+    location.title as location_title,
+    event_holder.title as holder_name,
+    event_holder.username as holder_username,
+    event.date_from as date_from,
+    event.date_to as date_to
+FROM `event` JOIN `subject` JOIN `location` JOIN `event_holder` JOIN `user`
+WHERE event.subject_id = '$subject_id' AND 
+  `location`.`id` = `event`.`location_id` AND `subject`.`id` = `event`.`subject_id` AND 
+  `event`.`holder_national_code` = `event_holder`.`user_national_code` AND 
+  `event_holder`.`user_national_code` = `user`.`national_code`";
 }
