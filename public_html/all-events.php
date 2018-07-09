@@ -1,0 +1,52 @@
+<?php
+
+require_once(realpath(dirname(__FILE__) . "/../resources/config.php"));
+require_once(realpath(dirname(__FILE__) . "/../resources/queries.php"));
+
+require_once(TEMPLATES_PATH . "/header.php");
+
+$connection = new mysqli($config[db][host], $config[db][username], $config[db][password], $config[db][dbname]);
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
+
+$result = $connection->query($get_all_event);
+
+?>
+
+    <table class="table table-striped table-dark">
+        <thead>
+        <tr>
+            <th scope="col">تا تاریخ</th>
+            <th scope="col">از تاریخ</th>
+            <th scope="col">برگزارکننده</th>
+            <th scope="col">مکان</th>
+            <th scope="col">موضوع</th>
+            <th scope="col">عنوان</th>
+            <th scope="col">#</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <?php
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while ($row = $result->fetch_assoc()) {
+                echo sprintf('<tr><th scope="row">%d</th><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr>',
+                    $row["date_to"], $row["date_from"], $row["holder_name"], $row["location_title"], $row["subject_title"], $row["event_title"], $row["event_id"]);
+            }
+        } else {
+            echo "0 results";
+        }
+        ?>
+
+        </tbody>
+    </table>
+
+<?php
+$connection->close();
+?>
+
+<?php
+require_once(TEMPLATES_PATH . "/footer.php");
+?>
